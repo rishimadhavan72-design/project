@@ -1,0 +1,1100 @@
+# TRUSTVAULT — COMPLETE FULL-STACK PROJECT MASTER PROMPT
+
+Act as a senior full-stack software architect, Angular developer, ASP.NET Core engineer, SQL Server database designer, UI/UX designer, and application security specialist.
+
+Build a complete, beginner-friendly, secure document management platform called **TrustVault** from the ground up.
+
+The application must support Personal Use and Corporate Use, with document-level permissions, private file storage, company membership, document sharing, audit logs, and secure authentication.
+
+Build a working application, not merely a static design or clickable prototype. Implement features incrementally, explain the files created, and clearly distinguish completed functionality from anything still mocked or incomplete.
+
+---
+
+# 1. MANDATORY TECHNOLOGY STACK
+
+Use only this architecture:
+
+- Frontend: Angular with TypeScript.
+- Angular Router for navigation.
+- Angular Reactive Forms for forms and validation.
+- Angular HttpClient for API requests.
+- Backend: ASP.NET Core Web API using C#.
+- Database: Microsoft SQL Server.
+- ORM: Entity Framework Core.
+- Authentication: securely implemented by the backend.
+- Document storage: private file storage outside the public web root, or a private object-storage service.
+- API communication: HTTPS in deployed environments.
+
+Do not replace Angular with React.
+
+Do not replace ASP.NET Core with Node.js.
+
+Do not replace SQL Server with Firebase, Firestore, or another database.
+
+Do not connect Angular directly to SQL Server.
+
+Use clear project separation, maintainable code, reusable components, typed DTOs, and appropriate dependency injection.
+
+If the current Google AI Studio environment cannot create or execute this exact stack, generate the Angular frontend and clearly documented API contracts, then provide the ASP.NET Core backend source and SQL Server configuration separately. Never silently substitute a different backend or claim that an unavailable component is running.
+
+---
+
+# 2. PROJECT PURPOSE AND BRANDING
+
+Application name: TrustVault.
+
+Tagline: Your documents. Your control.
+
+Purpose: Help individuals and organisations securely upload, store, manage, share, and control access to documents.
+
+Design a professional security-focused SaaS application.
+
+Visual style:
+- Deep forest green as the primary brand colour.
+- White cards and clean neutral backgrounds.
+- Modern typography.
+- Subtle borders and shadows.
+- Consistent spacing.
+- Rounded corners.
+- Professional document and security icons.
+- Accessible contrast.
+- Responsive layouts for desktop, tablet, and mobile.
+- Clear loading, empty, success, error, and access-denied states.
+- Keyboard accessibility and visible focus indicators.
+
+Avoid clutter, excessive gradients, unnecessary animation, and oversized decorative elements.
+
+Create a consistent design system with reusable buttons, input fields, cards, dialogs, tables, badges, alerts, navigation, and loading indicators.
+
+---
+
+# 3. COMPLETE APPLICATION FLOW
+
+Implement this navigation flow:
+
+WELCOME PAGE
+→ Choose Personal Use or Corporate Use
+→ Open the appropriate login page
+→ Sign in or register
+→ Authenticate through the backend
+→ Load authorised workspaces
+→ Open the correct dashboard
+→ View documents and the current user's effective permissions
+→ Perform only the actions authorised by the backend.
+
+Personal Use and Corporate Use must have clearly different login entry points and dashboards.
+
+Use Angular Router. Do not rely on full-page reloads for normal navigation.
+
+A user may belong to multiple companies. Show a workspace selector only for workspaces where the authenticated user has valid membership.
+
+Changing the selected workspace must cause the backend to validate membership and scope every subsequent request correctly.
+
+---
+
+# 4. WELCOME PAGE
+
+Create the route `/`.
+
+Include:
+- TrustVault logo.
+- Navigation links for Home, Security, Help, and Sign In.
+- Hero heading: "Your documents. Your control."
+- Short explanation of secure document management.
+- A prominent Personal Use card.
+- A prominent Corporate Use card.
+- A security benefits section.
+- A footer with Privacy, Security, Terms, and Help.
+
+Personal Use card:
+- Explain private document storage for individuals.
+- Include a Continue button.
+- Navigate to `/personal/login`.
+
+Corporate Use card:
+- Explain company workspaces, members, invitations, and document permissions.
+- Include a Continue button.
+- Navigate to `/corporate/login`.
+
+Sign In should let users choose Personal or Corporate.
+
+Make the page responsive and accessible.
+
+---
+
+# 5. PERSONAL USE AUTHENTICATION
+
+Implement these routes:
+
+- `/personal/login`
+- `/personal/register`
+- `/personal/forgot-password`
+
+## Personal login
+
+Include:
+- Email address.
+- Password.
+- Show/hide password toggle.
+- Remember email option, without creating an insecure permanent session.
+- Forgot password link.
+- Sign In button.
+- Create Personal Account link.
+- Back to Home link.
+
+Display the message:
+
+"Your personal workspace is private by default."
+
+## Personal registration
+
+Include:
+- Full name.
+- Email.
+- Password.
+- Confirm password.
+- Password visibility toggle.
+- Password requirements.
+- Terms and privacy agreement.
+- Create Account button.
+- Link to existing-user login.
+
+Validate all fields using Angular Reactive Forms.
+
+Show clear field-level errors and prevent duplicate submissions.
+
+## Password recovery
+
+Include:
+- Email field.
+- Send Recovery Instructions button.
+- Return to Sign In link.
+- Generic success messages that do not reveal whether an email is registered.
+
+Implement a secure password-reset flow on the backend. Do not pretend an email was sent unless an email provider is configured and confirms the operation.
+
+---
+
+# 6. CORPORATE USE AUTHENTICATION AND ONBOARDING
+
+Implement these routes:
+
+- `/corporate/login`
+- `/corporate/register-company`
+- `/corporate/join-company`
+- `/corporate/accept-invitation`
+
+## Corporate login
+
+Include:
+- Work email.
+- Password.
+- Show/hide password.
+- Sign In.
+- Forgot Password.
+- Register a New Company.
+- Join an Existing Company.
+- Back to Workspace Selection.
+
+## Company registration
+
+Collect:
+- Company or organisation name.
+- Unique workspace slug.
+- Initial administrator's name.
+- Work email.
+- Password.
+- Confirm password.
+- Terms agreement.
+
+Show a workspace preview.
+
+The backend must validate uniqueness and create the organisation and its initial administrator transactionally.
+
+Do not claim that the company has been legally verified unless a real verification process exists.
+
+## Join an existing company
+
+Users must join through a valid invitation or another explicitly authorised process.
+
+Do not allow an arbitrary user to become a member merely by entering a company name.
+
+## Accept an invitation
+
+Display:
+- Organisation name.
+- Intended recipient email.
+- Invitation status.
+- Expiry information, if available.
+- Accept Invitation button.
+
+The backend must verify the invitation token, recipient identity, expiry, revocation status, intended organisation, and single-use rules.
+
+Do not expose raw invitation tokens in logs or publicly accessible URLs beyond what is necessary for the invitation flow.
+
+---
+
+# 7. AUTHENTICATION AND SESSION SECURITY
+
+Inspect the backend's authentication design before implementing the frontend integration.
+
+Prefer secure server-managed sessions using HttpOnly, Secure cookies and appropriate CSRF protection where suitable.
+
+If bearer-token authentication is already used, implement a coherent token-storage, expiration, renewal, and revocation strategy instead of mixing incompatible authentication approaches.
+
+Requirements:
+- Never store passwords in browser storage.
+- Never expose JWT signing keys or database credentials to Angular.
+- Do not use local storage as proof of identity or permissions.
+- Use HTTPS in production.
+- Rate-limit login and password-recovery endpoints.
+- Use a secure password-hashing algorithm through established ASP.NET Core Identity mechanisms where appropriate.
+- Validate all user inputs on the server.
+- Return generic login errors that avoid revealing account existence.
+- Provide logout and session-expiration handling.
+- Protect state-changing requests against CSRF when cookie authentication is used.
+- Add appropriate CORS restrictions.
+- Implement backend authentication and authorization policies.
+
+Angular route guards are for navigation and user experience only. They must never be treated as the security boundary.
+
+---
+
+# 8. PERSONAL DASHBOARD
+
+Implement `/personal/dashboard`.
+
+Use a sidebar with:
+- Overview.
+- My Documents.
+- Shared with Me.
+- Categories.
+- Activity.
+- Account Settings.
+
+The dashboard should show:
+- Total documents the user is authorised to see.
+- Documents owned by the user.
+- Documents shared with the user.
+- Recent activity.
+- Recent documents.
+- Upload Document button.
+- Search and category filters.
+
+Personal documents must be private by default.
+
+Do not make personal documents visible to other users unless an authorised sharing grant exists.
+
+---
+
+# 9. CORPORATE DASHBOARD
+
+Implement `/corporate/dashboard`.
+
+Sidebar:
+- Overview.
+- Company Documents.
+- Shared with Me.
+- Categories.
+- Members.
+- Invitations.
+- Permissions.
+- Activity and Audit.
+- Workspace Settings.
+
+Show:
+- Current organisation and workspace selector.
+- Document count for the current user's authorised scope.
+- Documents shared with the user.
+- Recent authorised activity.
+- Recent documents.
+- Upload Document button.
+- Search and filters.
+
+Never combine documents from different companies in the same workspace query.
+
+A corporate administrator must not automatically be able to read every document.
+
+Organisation membership and document access are separate concepts.
+
+---
+
+# 10. DOCUMENT LIBRARY AND ROLE DISPLAY
+
+Create reusable components for:
+- Document table.
+- Responsive document cards.
+- Document icons.
+- Permission badges.
+- Search.
+- Filters.
+- Sorting.
+- Pagination.
+- Action menus.
+- Loading indicators.
+- Empty states.
+- Error states.
+
+Each visible document row should contain:
+- Document name.
+- File type.
+- Category.
+- Owner or shared-by information, if authorised.
+- Last updated date.
+- Current user's effective permission.
+- Sharing status.
+- Available actions.
+
+Include a clear label:
+
+"Your access"
+
+Display one of the following effective document permissions:
+
+## NONE
+
+No protected access.
+
+Do not display documents or metadata the user is not authorised to discover. NONE may be displayed only in an authorised context, such as a permission-management view where the document's existence is already visible to that user.
+
+## READ
+
+Allows viewing, previewing, and downloading when the applicable policy permits it.
+
+Does not allow editing, deletion, or sharing.
+
+## EDIT
+
+Includes READ capabilities and allows authorised editing and metadata changes.
+
+Does not automatically allow deletion of the original document or permission management.
+
+## OWNER
+
+Allows full document management according to policy, including managing permission grants, editing, and deletion or archival.
+
+Only an authorised owner can manage document grants unless a separately defined policy explicitly grants that ability.
+
+Show a tooltip or details panel explaining what each permission means.
+
+Use distinct, accessible badge styles.
+
+Do not allow a user to click a badge and change their own access.
+
+The displayed effective permission must come from the backend response, not a client-side assumption.
+
+---
+
+# 11. DOCUMENT DATA MODEL AND STORAGE
+
+Create appropriate SQL Server entities and DTOs for:
+
+- User.
+- Personal workspace.
+- Organisation.
+- Organisation membership.
+- Document metadata.
+- Document version, if supported.
+- Document permission grant.
+- Invitation.
+- Audit event.
+- Password-reset or session-related data as required by the chosen authentication design.
+
+Document metadata should include appropriate fields such as:
+- Document ID.
+- Owner ID.
+- Workspace ID, when applicable.
+- Original filename.
+- Sanitised storage filename or object key.
+- Content type.
+- File size.
+- Category.
+- Created date.
+- Updated date.
+- Storage location identifier.
+- Current status.
+
+Use GUIDs or another suitable non-sequential identifier where appropriate, but never rely on an unguessable identifier as a substitute for authorization.
+
+Use Entity Framework Core migrations.
+
+Keep file content in private storage, not directly in a public static folder.
+
+Store only necessary metadata in SQL Server.
+
+Validate:
+- File extension.
+- Actual file signature where practical.
+- MIME type.
+- File size.
+- Filename.
+- Storage path or object key.
+
+Use an allowlist of supported file types and configurable upload-size limits.
+
+Prevent path traversal and filename collisions.
+
+Implement malware scanning through an appropriate integration before allowing sensitive uploaded files to be downloaded or previewed, where available.
+
+If scanning is not configured, explicitly identify the limitation.
+
+Do not execute uploaded files.
+
+---
+
+# 12. UPLOAD DOCUMENT
+
+Create a reusable Upload Document dialog or page.
+
+Include:
+- Drag-and-drop file area.
+- File picker.
+- Document name.
+- Category.
+- Optional description.
+- Current workspace.
+- Upload progress.
+- Validation errors.
+- Cancel and Upload buttons.
+
+In Personal Use, newly uploaded documents belong to the user's private workspace.
+
+In Corporate Use, the backend must validate membership in the selected organisation and assign the document to the appropriate workspace.
+
+The backend must generate the storage identifier and validate all metadata.
+
+Do not trust the client-supplied owner, workspace, or permission fields.
+
+Show a success message only after the backend confirms that the upload was accepted and stored according to the configured workflow.
+
+---
+
+# 13. DOCUMENT DETAILS, PREVIEW, DOWNLOAD, EDIT, AND DELETE
+
+Create a document details page or dialog.
+
+Display only authorised metadata.
+
+Support:
+- Document preview where supported.
+- Download where permitted.
+- Edit permitted metadata.
+- View effective permissions.
+- View sharing information when authorised.
+- View document activity when authorised.
+- Delete or archive only when permitted by policy.
+
+The backend must check access before returning file content or metadata.
+
+Do not return a public permanent storage URL.
+
+For downloads, use an authorised API endpoint or short-lived protected mechanism that is generated only after server-side permission checks.
+
+For previews, enforce the same access rules as downloads.
+
+Prevent IDOR vulnerabilities: a user must not gain access by modifying a document ID in a URL or API request.
+
+Deleting a document must use a confirmation dialog and must be audited.
+
+If document versioning is implemented, make it clear which version is being viewed or downloaded.
+
+---
+
+# 14. DOCUMENT SHARING AND PERMISSION MANAGEMENT
+
+Create a reusable Share Document dialog.
+
+Display:
+- Document name.
+- Owner.
+- Current recipients.
+- Each recipient's permission.
+- Grant date, where available.
+- Access status.
+
+Allow an authorised owner to:
+- Grant READ.
+- Grant EDIT.
+- Change EDIT to READ.
+- Revoke an existing grant.
+- Review current grants.
+
+Recipient selection should use eligible authenticated users or permitted workspace members.
+
+Validate sharing rules on the backend.
+
+Do not add public sharing links in the initial version.
+
+Before revocation, show a confirmation dialog explaining that future protected requests will be denied once the revocation takes effect.
+
+Do not claim that revocation can erase copies that were already downloaded.
+
+After a successful permission change:
+- Refresh the recipient list.
+- Refresh effective permissions where appropriate.
+- Show a confirmation.
+- Record an audit event.
+
+Handle stale data, duplicate grants, revoked access, and concurrent changes.
+
+Do not report success before the API confirms the operation.
+
+---
+
+# 15. CORPORATE MEMBERS AND INVITATIONS
+
+Create:
+- Members table.
+- Invite Member form.
+- Pending Invitations table.
+- Member details panel.
+- Role change dialog.
+- Remove Member confirmation.
+
+Display authorised member information such as:
+- Name.
+- Work email.
+- Organisation role.
+- Membership status.
+- Join date, where available.
+
+Organisation roles:
+- Organisation Administrator.
+- Member.
+- Optional Auditor or Security Officer.
+
+Organisation administrators may manage membership, invitations, and permitted workspace settings.
+
+Members use company features according to policy.
+
+Auditors may inspect authorised audit information without automatically gaining document-content access.
+
+An organisation role is not a document permission.
+
+Do not let users assign themselves administrator privileges.
+
+When a member is removed, immediately prevent future access that depends on the revoked membership.
+
+Ensure that removing a member does not unintentionally transfer document ownership or leave inaccessible documents without an authorised owner. Define and test a deliberate ownership-transfer policy.
+
+Invitation tokens must be secure, expire, be single-use, and be verified by the backend.
+
+---
+
+# 16. ACTIVITY AND AUDIT HISTORY
+
+Create Personal Activity and Corporate Activity/Audit pages.
+
+Record relevant security events such as:
+- Successful authentication.
+- Failed authentication where appropriate.
+- Document upload.
+- Document preview or download where required by policy.
+- Metadata modification.
+- Document deletion or archival.
+- Permission grant.
+- Permission change.
+- Permission revocation.
+- Invitation creation and acceptance.
+- Member addition and removal.
+- Organisation role change.
+- Denied access attempts.
+
+Audit events should include appropriate fields:
+- Event ID.
+- Actor ID when known.
+- Action.
+- Target resource type and identifier.
+- Workspace identifier when applicable.
+- Timestamp.
+- Outcome.
+- Correlation identifier where useful.
+
+Avoid logging passwords, raw invitation tokens, session secrets, document contents, or unnecessary sensitive information.
+
+Users must see only audit records they are authorised to access.
+
+Audit records must not be silently editable through normal application APIs.
+
+Include filters for date, action, outcome, and actor when authorised.
+
+---
+
+# 17. ACCOUNT AND WORKSPACE SETTINGS
+
+Account settings:
+- Name.
+- Email display and verification status.
+- Password-change workflow.
+- Active session management if supported.
+- Logout.
+- Account-security information.
+
+Workspace settings:
+- Organisation name.
+- Workspace details.
+- Member management links.
+- Invitation settings.
+- Permitted configuration options.
+
+Validate every settings update on the backend.
+
+Do not expose sensitive user or organisation fields merely because they exist in a database entity.
+
+---
+
+# 18. OPTIONAL AI DOCUMENT SUGGESTIONS
+
+Design optional AI assistance for:
+- Suggested document category.
+- Suggested access level.
+- Suggested recipient or workspace based on explicit context.
+
+AI suggestions must never grant or expand permissions automatically.
+
+Always require an authorised human to approve a suggestion before a permission change.
+
+Do not send document contents to an external AI service unless the user or organisation has explicitly enabled the feature and the data-handling policy permits it.
+
+Clearly mark AI-generated suggestions.
+
+Allow the user to reject suggestions.
+
+If no AI service is configured, keep this feature disabled and show a clear configuration status rather than fabricating results.
+
+AI must not bypass backend authorization.
+
+---
+
+# 19. ANGULAR PROJECT ARCHITECTURE
+
+Use a maintainable structure similar to:
+
+src/app/
+  core/
+    authentication/
+    guards/
+    interceptors/
+    services/
+    models/
+  shared/
+    components/
+    dialogs/
+    pipes/
+    validators/
+  features/
+    welcome/
+    personal-auth/
+    corporate-auth/
+    personal-dashboard/
+    corporate-dashboard/
+    documents/
+    permissions/
+    members/
+    invitations/
+    activity/
+    settings/
+  app.routes.ts
+  app.config.ts
+
+Adapt this structure to the installed Angular version.
+
+Use:
+- Standalone components where appropriate.
+- Strict TypeScript.
+- Reactive Forms.
+- Typed service methods.
+- Shared loading and error handling.
+- Centralised API configuration.
+- Reusable UI components.
+- Environment-specific configuration.
+- Accessible form validation.
+- Consistent naming and error handling.
+
+Do not place all functionality in one giant component.
+
+Do not duplicate authentication or document-access logic across multiple components.
+
+Keep secrets out of frontend code.
+
+---
+
+# 20. ASP.NET CORE WEB API ARCHITECTURE
+
+Use a maintainable backend structure similar to:
+
+TrustVault.Api/
+  Controllers/
+  Data/
+  Entities/
+  DTOs/
+  Services/
+  Authorization/
+  Policies/
+  Middleware/
+  Validators/
+  Configuration/
+  Program.cs
+  appsettings.json
+
+Create appropriate controllers and services for:
+- Authentication.
+- Personal workspaces.
+- Organisations.
+- Memberships.
+- Invitations.
+- Documents.
+- Document permissions.
+- File uploads and downloads.
+- Activity and audit.
+- Account and workspace settings.
+
+Use DTOs instead of exposing database entities directly.
+
+Use server-side validation.
+
+Use dependency injection.
+
+Use structured logging.
+
+Use appropriate HTTP status codes.
+
+Handle exceptions without leaking stack traces or secrets.
+
+Use database transactions for related operations that must succeed or fail together.
+
+Configure SQL Server through environment-specific configuration or secret management.
+
+Use Entity Framework Core migrations and provide instructions to create and update the database.
+
+Inspect existing code before adding new controllers or routes. Avoid duplicate endpoints and incompatible DTOs.
+
+---
+
+# 21. PROPOSED API CONTRACTS
+
+Treat these routes as proposed contracts, not proof that they already exist. Inspect the backend and align the frontend with the implemented routes.
+
+Authentication:
+- POST /api/auth/register
+- POST /api/auth/login
+- POST /api/auth/logout
+- POST /api/auth/forgot-password
+- POST /api/auth/reset-password
+- GET /api/auth/me
+
+Organisations:
+- POST /api/organisations
+- GET /api/organisations
+- GET /api/organisations/{id}
+- GET /api/organisations/{id}/members
+- POST /api/organisations/{id}/invitations
+- GET /api/invitations/{token}
+- POST /api/invitations/{token}/accept
+- DELETE /api/organisations/{id}/invitations/{invitationId}
+
+Documents:
+- GET /api/documents
+- POST /api/documents
+- GET /api/documents/{id}
+- GET /api/documents/{id}/download
+- GET /api/documents/{id}/preview
+- PUT /api/documents/{id}
+- DELETE /api/documents/{id}
+
+Permissions:
+- GET /api/documents/{id}/permissions
+- POST /api/documents/{id}/permissions
+- PUT /api/documents/{id}/permissions/{grantId}
+- DELETE /api/documents/{id}/permissions/{grantId}
+
+Activity:
+- GET /api/activity
+- GET /api/organisations/{id}/audit
+
+Use suitable DTOs, pagination, filtering, and validation.
+
+Document and organisation IDs from the client must never be treated as proof of access.
+
+Return only information the caller is authorised to receive.
+
+---
+
+# 22. SERVER-SIDE AUTHORIZATION RULES
+
+Implement authorization for every protected endpoint.
+
+Determine access using the authenticated identity, resource ownership, active document grants, current organisation membership, applicable workspace policy, and any explicit administrative policy.
+
+Enforce the following initial rules:
+
+NONE:
+- No document-content access.
+- No download.
+- No edit.
+- No permission management.
+
+READ:
+- Read, preview, and download only when policy allows.
+- No content edits.
+- No permission management.
+
+EDIT:
+- READ capabilities.
+- Permitted content or metadata changes.
+- No automatic permission management.
+- No automatic deletion rights.
+
+OWNER:
+- Document management and permission management according to policy.
+
+An organisation administrator does not automatically receive document-content access.
+
+An organisation member does not automatically receive access to every company document.
+
+The backend must validate:
+- Document read.
+- Document preview.
+- Document download.
+- Document modification.
+- Document deletion.
+- Permission listing.
+- Permission creation.
+- Permission modification.
+- Permission revocation.
+- Workspace access.
+- Member management.
+- Invitation management.
+- Audit access.
+
+Do not implement authorization only in Angular.
+
+Do not accept an effective permission value from the frontend as an authoritative input.
+
+Where possible, implement reusable ASP.NET Core authorization handlers and policies.
+
+Ensure that revoked grants and revoked memberships are reflected in subsequent protected requests.
+
+Prevent cross-tenant access at both the query and authorization layers.
+
+---
+
+# 23. DATABASE AND FILE STORAGE REQUIREMENTS
+
+Provide:
+- SQL Server connection configuration.
+- Entity Framework Core DbContext.
+- Entities and relationships.
+- Appropriate unique constraints.
+- Foreign keys.
+- Indexes for common queries.
+- Initial migrations.
+- Sample development seed data, if needed.
+- Database setup instructions.
+
+Seed data must be clearly marked as development-only.
+
+Never include production credentials in source control.
+
+Never store real uploaded documents as public static assets.
+
+Ensure that file metadata, database records, and storage objects are handled consistently if an upload or delete operation fails partway through.
+
+Use a deliberate deletion or archival strategy.
+
+---
+
+# 24. AUTOMATED TESTING
+
+Create tests for the Angular frontend and ASP.NET Core backend.
+
+Backend tests must include:
+
+1. Unauthenticated user attempts to read a document.
+2. NONE user attempts to download.
+3. READ user attempts to edit.
+4. READ user attempts to delete.
+5. EDIT user attempts to manage permissions.
+6. EDIT user attempts to delete the original.
+7. OWNER grants READ.
+8. OWNER grants EDIT.
+9. OWNER revokes a grant.
+10. A revoked recipient attempts another request.
+11. User A attempts to access User B's private document.
+12. Company A member attempts to access Company B's documents.
+13. Organisation administrator attempts to read a document without a grant.
+14. User attempts to modify their own organisation role.
+15. Expired invitation is accepted.
+16. Revoked invitation is accepted.
+17. Invitation is accepted by the wrong recipient.
+18. Upload contains an invalid file.
+19. File upload exceeds the configured size limit.
+20. Search leaks metadata for inaccessible documents.
+21. Permission changes are recorded in the audit log.
+22. Network failures and API errors are handled correctly by Angular.
+
+Verify backend authorization, HTTP responses, response content, tenant isolation, and audit records.
+
+Write negative tests, not just successful-operation tests.
+
+Never fabricate test results. Report which tests were run and which remain unverified.
+
+---
+
+# 25. USER EXPERIENCE REQUIREMENTS
+
+Every screen must include suitable:
+- Loading states.
+- Empty states.
+- Error states.
+- Success feedback.
+- Form validation.
+- Confirmation dialogs for destructive actions.
+- Responsive behaviour.
+- Keyboard accessibility.
+- Screen-reader-friendly labels.
+- Navigation and breadcrumbs where useful.
+
+Do not display success before an API operation succeeds.
+
+Do not leave buttons without functionality.
+
+If a feature is not implemented, label it clearly as unavailable or under development.
+
+Do not use mock data in a production flow.
+
+---
+
+# 26. IMPLEMENTATION ORDER
+
+Build the project incrementally in the following order:
+
+PHASE 1:
+- Project setup.
+- Design system.
+- Welcome page.
+- Personal/Corporate selection.
+- Angular routing.
+
+PHASE 2:
+- Personal login.
+- Personal registration.
+- Password recovery.
+- Corporate login.
+- Company registration.
+- Invitation acceptance.
+
+PHASE 3:
+- Personal dashboard.
+- Corporate dashboard.
+- Workspace selector.
+- Reusable document table and cards.
+- Effective permission badges.
+
+PHASE 4:
+- Document upload.
+- Document details.
+- Preview.
+- Download.
+- Metadata editing.
+- Delete or archive.
+
+PHASE 5:
+- Share dialog.
+- Permission grant management.
+- Member management.
+- Invitations.
+- Workspace roles.
+
+PHASE 6:
+- Activity and audit history.
+- Account settings.
+- Workspace settings.
+- Loading, empty, and error states.
+
+PHASE 7:
+- ASP.NET Core API integration.
+- SQL Server persistence.
+- Private file storage.
+- Authentication.
+- Server-side authorization.
+
+PHASE 8:
+- Automated tests.
+- Security review.
+- Bug fixes.
+- Deployment preparation.
+
+Do not attempt to generate the entire application as one unreviewed block of code. Implement each phase, check the output, and then continue.
+
+---
+
+# 27. BEGINNER-FRIENDLY INSTRUCTIONS
+
+Assume I am a beginner learning full-stack development.
+
+After each phase:
+1. Explain what was implemented in simple English.
+2. List the files created or changed.
+3. Explain the purpose of the important files.
+4. Give exact commands to run the frontend and backend.
+5. Explain required configuration.
+6. Explain how to test the screens manually.
+7. Identify features still using mock data.
+8. Identify missing backend endpoints.
+9. Explain any errors and how to fix them.
+10. Do not claim a feature works until it has been verified.
+
+Use Windows-friendly terminal commands where possible.
+
+Provide clear instructions for:
+- Installing compatible prerequisites.
+- Running Angular locally.
+- Running ASP.NET Core locally.
+- Configuring SQL Server.
+- Applying Entity Framework Core migrations.
+- Configuring environment variables and secrets.
+- Connecting the frontend to the API.
+- Testing authentication and permissions.
+
+Keep all configuration consistent with the installed versions of Angular, .NET, SQL Server, and Entity Framework Core.
+
+---
+
+# 28. COMPLETION REPORT
+
+When the implementation is complete, provide:
+
+- Application architecture.
+- Project folder structure.
+- List of implemented screens.
+- List of implemented API endpoints.
+- Database schema and migration status.
+- Authentication method.
+- File-storage configuration.
+- Permission model.
+- Security controls.
+- Automated test results.
+- Commands to run the complete project.
+- Known limitations.
+- Production-readiness gaps.
+
+Never describe a UI-only prototype as a completed full-stack application.
+
+Never claim security tests passed unless they were actually executed.
+
+---
+
+# FINAL INSTRUCTION
+
+Start by building Phase 1: the TrustVault welcome page with two distinct choices, Personal Use and Corporate Use.
+
+Then implement the Personal login and registration screens, followed by Corporate login and company onboarding.
+
+After the initial authentication flow is working, continue through every remaining phase in the specified order.
+
+Preserve the required Angular + ASP.NET Core Web API + SQL Server architecture throughout.
+
+Prioritise correct authorization, tenant isolation, private-by-default documents, visible effective permission roles, and beginner-friendly implementation instructions.
+
+Begin implementation now. Do not respond with only a plan; create the first working phase and explain how to run and verify it.

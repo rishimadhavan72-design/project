@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Remix Remix Remix Remix TrustVault - Secure Document Management",
+  "description": "Your documents. Your control. Secure document management for personal and corporate use with strict document-level permissions (NONE, READ, EDIT, OWNER), private storage, workspace isolation, and full audit logs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

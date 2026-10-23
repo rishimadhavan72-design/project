@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* TrustVault DRM Anti-Print Protection */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  
+  html, body {
+    background-color: #020617 !important;
+    color: #ffffff !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  body::before {
+    content: "🔒 TRUSTVAULT SECURITY ENFORCEMENT: Physical printing and PDF export of zero-knowledge documents are blocked by enterprise policy. This export attempt has been logged.";
+    display: flex !important;
+    visibility: visible !important;
+    position: fixed !important;
+    inset: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 3rem !important;
+    font-family: ui-sans-serif, system-ui, sans-serif !important;
+    font-size: 18pt !important;
+    font-weight: 800 !important;
+    color: #ef4444 !important;
+    text-align: center !important;
+    background-color: #0f172a !important;
+    border: 8px solid #b91c1c !important;
+  }
+}
+
+/* User Selection Suppression for Protected Viewers */
+.drm-protected-surface {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Forensic Watermark Overlay Grid */
+.forensic-watermark-bg {
+  background-image: repeating-linear-gradient(
+    -35deg,
+    transparent,
+    transparent 120px,
+    rgba(16, 185, 129, 0.05) 120px,
+    rgba(16, 185, 129, 0.05) 240px
+  );
+}
